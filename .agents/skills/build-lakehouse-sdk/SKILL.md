@@ -13,7 +13,7 @@ Primary OpenAPI specification reference: `https://api.altertable.ai/openapi/lake
 
 ## Required Outcomes
 
-1. Full endpoint coverage (`append`, `query` (streamed and accumulated), `query/:query_id` GET/DELETE, `upload`, `validate`).
+1. Full endpoint coverage (`append`, `query` — both streamed and accumulated —, `query/:query_id` GET/DELETE, `upload`, `validate`).
 2. Package is publishable to the target language's primary registry.
 3. Typed models and typed errors are first-class.
 4. `/query` exposes both streamed (with metadata, columns, and row iterator) and accumulated (with all rows) versions.
