@@ -42,6 +42,98 @@ Storage key format: `atbl.{apiKey}.{environment}`
 | `PROPERTY_URL`         | `"$url"`         |
 | `PROPERTY_VIEWPORT`    | `"$viewport"`    |
 
+## Timing and Limits (Mobile)
+
+| Constant                      | Value   | Notes                      |
+| ----------------------------- | ------- | -------------------------- |
+| `MOBILE_REQUEST_TIMEOUT_MS`   | `10_000` | Mobile tier HTTP timeout   |
+
+## Config Interfaces and Defaults
+
+### WebConfig
+
+| Option             | Type                      | Default                   | Description                                                                       |
+| ------------------ | ------------------------- | ------------------------- | --------------------------------------------------------------------------------- |
+| `apiKey`           | `string`                  | _(required)_              | Public API key (`pk_live_…` or `pk_test_…`)                                       |
+| `baseUrl`          | `string`                  | `https://api.altertable.ai` | Override the API base URL                                                       |
+| `environment`      | `string`                  | `"production"`            | Analytics environment name                                                        |
+| `persistence`      | `"localStorage+cookie" \| "localStorage" \| "sessionStorage" \| "cookie" \| "memory"` | `"localStorage+cookie"` | Storage backend |
+| `trackingConsent`  | `TrackingConsentState`    | `"granted"`               | Initial tracking consent state                                                    |
+| `autoCapture`      | `boolean`                 | `true`                    | Automatically capture pageviews on SPA navigation                                 |
+| `release`          | `string \| null`          | `null`                    | App release/version string attached to every event as `$release`                 |
+| `onError`          | `(error: AltertableError) => void \| null` | `null`  | Callback invoked on SDK errors (must not throw)                                   |
+| `debug`            | `boolean`                 | `false`                   | Enable verbose console logging                                                    |
+| `requestTimeout`   | `number`                  | `REQUEST_TIMEOUT_MS`      | HTTP request timeout in milliseconds                                              |
+
+**`WEB_DEFAULTS`** (canonical values):
+
+```
+apiKey:           (none — required)
+baseUrl:          "https://api.altertable.ai"
+environment:      "production"
+persistence:      "localStorage+cookie"
+trackingConsent:  "granted"
+autoCapture:      true
+release:          null
+onError:          null
+debug:            false
+requestTimeout:   5000
+```
+
+### MobileConfig
+
+| Option            | Type                   | Default                     | Description                                                        |
+| ----------------- | ---------------------- | --------------------------- | ------------------------------------------------------------------ |
+| `apiKey`          | `string`               | _(required)_                | Public API key                                                     |
+| `baseUrl`         | `string`               | `https://api.altertable.ai` | Override the API base URL                                          |
+| `environment`     | `string`               | `"production"`              | Analytics environment name                                         |
+| `trackingConsent` | `TrackingConsentState` | `"granted"`                 | Initial tracking consent state                                     |
+| `release`         | `string \| null`       | `null`                      | App release/version string attached to every event as `$release`  |
+| `onError`         | `(error: AltertableError) => void \| null` | `null` | Callback invoked on SDK errors                               |
+| `debug`           | `boolean`              | `false`                     | Enable verbose logging                                             |
+| `requestTimeout`  | `number`               | `MOBILE_REQUEST_TIMEOUT_MS` | HTTP request timeout in milliseconds                               |
+| `flushOnBackground` | `boolean`            | `true`                      | Flush queued events when app moves to background                   |
+
+**`MOBILE_DEFAULTS`** (canonical values):
+
+```
+apiKey:             (none — required)
+baseUrl:            "https://api.altertable.ai"
+environment:        "production"
+trackingConsent:    "granted"
+release:            null
+onError:            null
+debug:              false
+requestTimeout:     10000
+flushOnBackground:  true
+```
+
+### ServerConfig
+
+| Option           | Type                    | Default                     | Description                                                       |
+| ---------------- | ----------------------- | --------------------------- | ----------------------------------------------------------------- |
+| `apiKey`         | `string`                | _(required)_                | Public API key (`pk_live_…` or `pk_test_…`)                       |
+| `baseUrl`        | `string`                | `https://api.altertable.ai` | Override the API base URL                                         |
+| `environment`    | `string`                | `"production"`              | Analytics environment name                                        |
+| `release`        | `string \| null`        | `null`                      | App release/version string attached to every event as `$release` |
+| `onError`        | `(error: AltertableError) => void \| null` | `null` | Callback invoked on SDK errors                              |
+| `debug`          | `boolean`               | `false`                     | Enable verbose logging                                            |
+| `requestTimeout` | `number`                | `5000`                      | HTTP request timeout in milliseconds                              |
+| `maxBatchSize`   | `number`                | `100`                       | Maximum number of events per batch request                        |
+
+**`SERVER_DEFAULTS`** (canonical values):
+
+```
+apiKey:         (none — required)
+baseUrl:        "https://api.altertable.ai"
+environment:    "production"
+release:        null
+onError:        null
+debug:          false
+requestTimeout: 5000
+maxBatchSize:   100
+```
+
 ## Tracking Consent States
 
 | Constant                    | Value        | Behavior                         |

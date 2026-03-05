@@ -12,6 +12,7 @@ This skill is referenced by `build-*` skills during their packaging/release phas
 - **[bootstrap-sdk](../bootstrap-sdk/SKILL.md)**: Repo initialization and spec submodule workflow
 - **[build-lakehouse-sdk](../build-lakehouse-sdk/SKILL.md)**: Lakehouse API client implementation
 - **[build-product-analytics-sdk](../build-product-analytics-sdk/SKILL.md)**: Product Analytics SDK implementation
+- **[sync-repos](../sync-repos/SKILL.md)**: Cross-repo consistency
 
 ## Versioning
 
