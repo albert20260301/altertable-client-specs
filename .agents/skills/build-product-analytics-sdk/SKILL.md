@@ -377,6 +377,8 @@ Handle `environment-not-found` error specifically: log a warning with a link to 
 
 **All tiers.**
 
+Implement the mandatory test scenarios defined in [`TEST_PLAN.md`](TEST_PLAN.md).
+
 #### Unit tests
 
 - Model serialization round-trips
