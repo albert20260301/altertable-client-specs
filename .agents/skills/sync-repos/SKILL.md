@@ -71,6 +71,7 @@ Templated files contain `{variable}` placeholders. Render them with repo-specifi
 | `{linter}` | Repo's existing toolchain |
 | `{formatter}` | Repo's existing toolchain |
 | `{lint_command}` | Repo's existing toolchain |
+| `{language_ignores}` | `https://www.toptal.com/developers/gitignore/api/{language}` |
 
 ## Sync Workflow
 
