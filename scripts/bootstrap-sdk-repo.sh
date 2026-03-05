@@ -131,7 +131,41 @@ gh api \
 JSON
 echo "    Done."
 
-# ── 5. Summary ────────────────────────────────────────────────────────────────
+# ── 5. Create standard GitHub labels ─────────────────────────────────────────
+# Labels defined in .agents/skills/triage-issues/SKILL.md
+
+echo "==> Creating standard labels"
+
+create_label() {
+  local name="$1" color="$2" description="$3"
+  if gh api "repos/$REPO/labels/$name" --jq '.name' &>/dev/null 2>&1; then
+    gh api --method PATCH "repos/$REPO/labels/$name" \
+      --field color="$color" \
+      --field description="$description" > /dev/null
+  else
+    gh api --method POST "repos/$REPO/labels" \
+      --field name="$name" \
+      --field color="$color" \
+      --field description="$description" > /dev/null
+  fi
+}
+
+create_label "bug"                "d73a4a" "Confirmed bug"
+create_label "enhancement"        "a2eeef" "Feature request"
+create_label "question"           "d876e3" "Usage question (not a bug)"
+create_label "duplicate"          "cfd3d7" "Duplicate of an existing issue"
+create_label "needs-repro"        "fbca04" "Awaiting minimal reproduction"
+create_label "needs-info"         "fbca04" "Awaiting more information from author"
+create_label "stale"              "e4e669" "No activity for 30+ days"
+create_label "good first issue"   "7057ff" "Good for newcomers"
+create_label "wontfix"            "ffffff" "Will not be addressed"
+create_label "invalid"            "e4e669" "Not a valid issue"
+create_label "security"           "d73a4a" "Security-related (see SECURITY.md)"
+create_label "needs-human-review" "ff8c00" "Escalation marker — blocker or ambiguity requiring human judgment"
+
+echo "    Done."
+
+# ── 6. Summary ────────────────────────────────────────────────────────────────
 
 echo ""
 echo "✓ Repository bootstrap complete: https://github.com/$REPO"
@@ -147,3 +181,6 @@ echo "    Require PR + 1 approval before merging"
 echo "    Require status checks to pass (branches must be up to date)"
 echo "    Enforce for admins (no bypass)"
 echo "    Force-push / deletion: disabled"
+echo ""
+echo "  Labels: bug, enhancement, question, duplicate, needs-repro, needs-info,"
+echo "          stale, good first issue, wontfix, invalid, security, needs-human-review"

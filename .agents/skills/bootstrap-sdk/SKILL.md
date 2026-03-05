@@ -16,6 +16,7 @@ This skill coordinates with other SDK development skills:
 - **[build-lakehouse-sdk](../build-lakehouse-sdk/SKILL.md)**: Implementation guide for Lakehouse API clients
 - **[build-product-analytics-sdk](../build-product-analytics-sdk/SKILL.md)**: Implementation guide for Product Analytics SDKs
 - **[build-http-sdk](../build-http-sdk/SKILL.md)**: HTTP client best practices (referenced by build-* skills)
+- **[sync-repos](../sync-repos/SKILL.md)**: Cross-repo consistency for community files and config
 - **[release-sdk](../release-sdk/SKILL.md)**: Versioning, changelog, and registry publishing conventions
 
 ## Inputs
@@ -74,7 +75,21 @@ git add specs
 git commit -m "chore: update altertable-client-specs submodule to <new-spec-tag>"
 ```
 
-### Phase 3: Implement or update the SDK
+### Phase 3: Populate community files (initial bootstrap only)
+
+**Skip this phase for spec updates** — community files are managed separately via `sync-repos`.
+
+For an initial bootstrap (repo has no community files yet), copy all managed files from [sync-repos](../sync-repos/SKILL.md) templates into the repo:
+
+1. Copy all verbatim files from [`sync-repos/templates/`](../sync-repos/templates/) directly into the repo root — refer to that directory as the source of truth for which files are included and their content.
+
+2. Render any templated files (those containing `{variable}` placeholders) by substituting repo-specific values — refer to [`sync-repos/SKILL.md`](../sync-repos/SKILL.md) for the list of templated files and the variables each one expects.
+
+3. Set up CI workflows for the target language.
+
+4. Commit all community files together: `"chore: add community files"`
+
+### Phase 4: Implement or update the SDK
 
 Read the specs submodule to understand the API surface, then apply the appropriate SDK skill:
 
@@ -85,7 +100,7 @@ Read the specs submodule to understand the API surface, then apply the appropria
 
 **Spec update**: use the spec diff from Phase 2 to identify what changed. Only implement what is new or modified. Document breaking changes in `CHANGELOG.md`.
 
-### Phase 4: Validate
+### Phase 5: Validate
 
 Before opening the PR:
 
@@ -94,8 +109,9 @@ Before opening the PR:
 - [ ] `CHANGELOG.md` is updated with a new entry
 - [ ] `README.md` reflects any new public API surface
 - [ ] Package version bumped if applicable (follow [release-sdk](../release-sdk/SKILL.md) conventions)
+- [ ] Community files present (initial bootstrap only): `LICENSE`, `CODE_OF_CONDUCT.md`, `SECURITY.md`, `CONTRIBUTING.md`, `.github/` templates
 
-### Phase 5: Open a PR
+### Phase 6: Open a PR
 
 Push the branch to your fork and open a PR against the upstream `main` branch.
 
@@ -105,10 +121,10 @@ Push the branch to your fork and open a PR against the upstream `main` branch.
 Given: target repo + spec tag
 │
 ├── Does the repo have a `specs` submodule?
-│   ├── No  → Phase 1 (fork/clone) → Phase 2 (initial submodule) → Phase 3 (full implementation)
-│   └── Yes → Phase 1 (fork/clone) → Phase 2 (update submodule) → Phase 3 (diff-based update)
+│   ├── No  → Phase 1 (fork/clone) → Phase 2 (initial submodule) → Phase 3 (community files) → Phase 4 (full implementation)
+│   └── Yes → Phase 1 (fork/clone) → Phase 2 (update submodule) → Phase 4 (diff-based update)
 │
-└── Always → Phase 4 (validate) → Phase 5 (open PR)
+└── Always → Phase 5 (validate) → Phase 6 (open PR)
 ```
 
 ## Notes
