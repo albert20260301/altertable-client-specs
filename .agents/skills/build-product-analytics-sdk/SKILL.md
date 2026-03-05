@@ -175,6 +175,14 @@ Support runtime storage migration when `persistence` config changes via `configu
 
 Use platform-native secure storage (Keychain on iOS, EncryptedSharedPreferences on Android). Fallback to standard storage if unavailable.
 
+**Linux CI Compatibility:**
+Mobile SDKs often run unit tests on Linux CI runners (e.g., GitHub Actions `ubuntu-latest`). Platform-specific security frameworks (like `Security.framework` on macOS/iOS) are unavailable on Linux.
+
+**Requirement:** Abstract your storage layer behind a protocol/interface.
+- **Production:** Inject the concrete secure storage implementation.
+- **Linux/CI:** Detect the platform (e.g., `#if os(Linux)`) and inject an **In-Memory** or **No-Op** storage implementation.
+- **Do not** simply skip tests. Verify the SDK logic using the in-memory fallback to ensure behavior (identity persistence, queueing) remains correct even without the native secure container.
+
 ### Phase 7: Tracking Consent
 
 **Web and mobile tiers only.**
