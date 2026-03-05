@@ -111,7 +111,7 @@ Follow the structure defined in the [release-sdk](../release-sdk/SKILL.md) skill
 
 ### Additional conventions for Altertable packages
 
-- **Install section**: Single command only. Use the canonical package manager for the ecosystem (e.g., `npm install`, `pip install`, `gem install`).
+- **Install section**: Single command only. Use the canonical package manager for the ecosystem (e.g., `npm install`, `pip install`, `gem install`). For Swift, show the `Package.swift` dependency declaration.
 - **Quick start**: Provide the minimal working example — init + one `track` call (for analytics SDKs) or one query (for lakehouse SDKs). Keep it under 20 lines.
 - **API reference**: Document every public method. Show the signature, a one-line description, and a usage example. Group by functional area (e.g., Identity, Tracking, Configuration).
 - **Configuration**: Table with columns `Option`, `Type`, `Default`, `Description`. List all config keys.
