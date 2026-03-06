@@ -13,14 +13,18 @@ SDK repositories pin a specific version tag of this repo via a `specs/` submodul
 
 ## Skills
 
-| Skill                                                                                | Description                                                                                           |
-| ------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------- |
-| [`bootstrap-sdk`](.agents/skills/bootstrap-sdk/SKILL.md)                             | Fork, clone, and wire up a new SDK repo or update an existing one to a new spec version               |
-| [`build-lakehouse-sdk`](.agents/skills/build-lakehouse-sdk/SKILL.md)                 | Build a production-grade Altertable Lakehouse API client in any language                              |
-| [`build-product-analytics-sdk`](.agents/skills/build-product-analytics-sdk/SKILL.md) | Build an Altertable Product Analytics SDK with identity, event tracking, and auto-capture             |
-| [`build-http-sdk`](.agents/skills/build-http-sdk/SKILL.md)                           | HTTP client best practices — connection pooling, keep-alive, timeouts (referenced by build-\* skills) |
-| [`build-readme`](.agents/skills/build-readme/SKILL.md)                               | Write READMEs for SDK repos and monorepo roots following Altertable conventions                       |
-| [`release-sdk`](.agents/skills/release-sdk/SKILL.md)                                 | Release SDKs, write changelogs, and publish to language registries                                    |
+| Skill                                                                        | Description                                                                                           |
+| ---------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| [`bootstrap-sdk`](skills/bootstrap-sdk/SKILL.md)                             | Fork, clone, and wire up a new SDK repo or update an existing one to a new spec version               |
+| [`build-lakehouse-sdk`](skills/build-lakehouse-sdk/SKILL.md)                 | Build a production-grade Altertable Lakehouse API client in any language                              |
+| [`build-product-analytics-sdk`](skills/build-product-analytics-sdk/SKILL.md) | Build an Altertable Product Analytics SDK with identity, event tracking, and auto-capture             |
+| [`build-http-sdk`](skills/build-http-sdk/SKILL.md)                           | HTTP client best practices — connection pooling, keep-alive, timeouts (referenced by build-\* skills) |
+| [`build-readme`](skills/build-readme/SKILL.md)                               | Write READMEs for SDK repos and monorepo roots following Altertable conventions                       |
+| [`maintainer-routine`](skills/maintainer-routine/SKILL.md)                   | Notification-driven maintainer routine to identify actionable work across Altertable SDK repositories |
+| [`release-sdk`](skills/release-sdk/SKILL.md)                                 | Release SDKs, write changelogs, and publish to language registries                                    |
+| [`review-pr`](skills/review-pr/SKILL.md)                                     | Review community pull requests against Altertable SDK standards                                       |
+| [`sync-repos`](skills/sync-repos/SKILL.md)                                   | Keep shared configuration, community files, and CI templates consistent across SDK repositories       |
+| [`triage-issues`](skills/triage-issues/SKILL.md)                             | Triage incoming GitHub issues across Altertable SDK repositories                                      |
 
 ## Using This Repo as a Submodule
 
@@ -39,7 +43,7 @@ After cloning an SDK repo that already includes this submodule:
 git submodule update --init --recursive
 ```
 
-See the [`bootstrap-sdk`](.agents/skills/bootstrap-sdk/SKILL.md) skill for the full workflow, including fork strategy, branch naming, and PR conventions.
+See the [`bootstrap-sdk`](skills/bootstrap-sdk/SKILL.md) skill for the full workflow, including fork strategy, branch naming, and PR conventions.
 
 ## Versioning
 
@@ -47,7 +51,7 @@ Spec versions follow [Semantic Versioning](https://semver.org). Each tag (e.g. `
 
 ## Maintainer Agent
 
-This repository ships a [`MAINTAINER_SOUL.md`](MAINTAINER_SOUL.md) that defines **Albert**, the autonomous AI maintainer responsible for triaging issues, reviewing PRs, and keeping the SDK ecosystem healthy. Albert operates via fork + PR.
+This repository ships a [`SOUL.md`](SOUL.md) that defines **Albert**, the autonomous AI maintainer responsible for triaging issues, reviewing PRs, and keeping the SDK ecosystem healthy. Albert operates via fork + PR.
 
 ## Contributing
 
