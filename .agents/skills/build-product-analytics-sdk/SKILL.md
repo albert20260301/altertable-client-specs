@@ -234,10 +234,11 @@ When `autoCapture: true`:
 
 **All tiers.**
 
-#### `track(event, properties)`
+#### `track(event, properties, distinct_id)`
 
 - `POST /track`
 - Attach context: `environment`, `device_id`, `distinct_id`, `anonymous_id`, `session_id`, `timestamp`.
+- **Server tier**: The `distinct_id` must be passed as an explicit argument to the `track` method, as the client is stateless and cannot rely on a prior `identify()` call to set identity state.
 - Merge system properties (`PROPERTY_LIB`, `PROPERTY_LIB_VERSION`, `PROPERTY_RELEASE`, `PROPERTY_URL`) with user properties. User properties win on conflict. See [sdk-constants.md](sdk-constants.md) for key values.
 - Renew session before sending (web/mobile).
 
