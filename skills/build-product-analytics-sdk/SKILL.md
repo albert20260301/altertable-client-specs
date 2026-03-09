@@ -103,7 +103,7 @@ If not provided, choose ecosystem-standard defaults and document them.
 
 Read the OpenAPI spec and manually define typed request/response models from it — do not use codegen tools. Preserve `oneOf` semantics (single payload or array) for batch support.
 
-SDKs should send ISO 8601 timestamps by default.
+All three methods (`track`, `identify`, `alias`) accept an optional `timestamp` parameter. The API accepts either an ISO 8601 datetime string (e.g. `"2025-06-15T14:30:00.000Z"`) or a Unix epoch integer (seconds). Default to ISO 8601 when generating the timestamp automatically — it's more debuggable. When the caller provides a timestamp explicitly (common for server-side events that sit in a queue before being sent), accept whichever format they supply and pass it through as-is.
 
 ### Phase 3: Client Core
 
@@ -111,7 +111,9 @@ SDKs should send ISO 8601 timestamps by default.
 
 Implement a configurable client constructor. The full typed config interfaces (`WebConfig`, `MobileConfig`, `ServerConfig`) and their default values (`WEB_DEFAULTS`, `MOBILE_DEFAULTS`, `SERVER_DEFAULTS`) are defined in [sdk-constants.md](sdk-constants.md). Use those types and defaults as-is.
 
-**Server tier**: no sessions, no storage, no auto-capture. The client is stateless. Identity fields (`distinct_id`, `anonymous_id`, `device_id`) are passed explicitly per call.
+**Server tier**: no sessions, no storage, no auto-capture. The client is stateless. Identity fields (`distinct_id`, `anonymous_id`, `device_id`) are passed explicitly per call — this directly shapes the method signatures for `track`, `identify`, and `alias` on the server tier. See Phase 10 for the exact prototypes.
+
+**Named/keyword arguments for optional parameters (all tiers):** Never create a method where callers must pass `null` or a positional placeholder to reach a later optional argument. Group all optional parameters into a named options object/struct/dict — or use the language's native keyword argument syntax — so callers can supply any subset in any order without dummy positional values. This applies to both the server-tier `options` objects in Phase 10 and any other method that gains multiple optional parameters in the future.
 
 ### Phase 4: Identity Model
 
@@ -131,7 +133,7 @@ See [sdk-constants.md](sdk-constants.md) for prefix values.
 #### State transitions
 
 1. **Fresh state**: `distinct_id = anonymous-{uuid}`, `anonymous_id = null`, `session_id = session-{uuid}`.
-2. **After `identify(userId)`**: `distinct_id = userId`, `anonymous_id = previous distinct_id`.
+2. **After `identify(user_id)`**: `distinct_id = user_id`, `anonymous_id = previous distinct_id`.
 3. **After `reset()`**: New `session_id`, new `anonymous-{uuid}` as `distinct_id`, `anonymous_id = null`. Device ID preserved unless `resetDeviceId: true`.
 4. **Re-identify with different user**: Auto-reset first, then identify.
 
@@ -234,23 +236,71 @@ When `autoCapture: true`:
 
 **All tiers.**
 
-#### `track(event, properties)`
+#### `track`
+
+**Web/mobile**: `track(event, properties?, options?)`
+
+`options` (web/mobile, all optional, use named/keyword arguments):
+
+- `timestamp` — ISO 8601 string or Unix epoch integer (seconds); defaults to current time
+
+**Server**: `track(event, distinct_id, options?)`
+
+`options` (server, all optional, use named/keyword arguments):
+
+- `properties` — event properties dict/object
+- `anonymous_id` — pass when forwarding client-side identity context
+- `device_id` — pass when forwarding client-side identity context
+- `timestamp` — ISO 8601 string or Unix epoch integer (seconds); defaults to current time
 
 - `POST /track`
 - Attach context: `environment`, `device_id`, `distinct_id`, `anonymous_id`, `session_id`, `timestamp`.
+- `timestamp` is an optional ISO 8601 string or Unix epoch integer (seconds). If omitted, default to the current time as an ISO 8601 string.
 - Merge system properties (`PROPERTY_LIB`, `PROPERTY_LIB_VERSION`, `PROPERTY_RELEASE`, `PROPERTY_URL`) with user properties. User properties win on conflict. See [sdk-constants.md](sdk-constants.md) for key values.
 - Renew session before sending (web/mobile).
+- **Server tier**: `distinct_id` is required (no stored identity). `anonymous_id` and `device_id` are optional — pass them when you have them (e.g. forwarded from a client SDK), omit otherwise. `session_id` is never included (stateless).
 
-#### `identify(userId, traits)`
+#### `identify`
+
+**Web/mobile**: `identify(user_id, traits?, options?)`
+
+`options` (web/mobile, all optional, use named/keyword arguments):
+
+- `timestamp` — ISO 8601 string or Unix epoch integer (seconds); defaults to current time
+
+**Server**: `identify(user_id, options?)`
+
+`options` (server, all optional, use named/keyword arguments):
+
+- `traits` — user traits dict/object
+- `anonymous_id` — pass when forwarding client-side identity context
+- `device_id` — pass when forwarding client-side identity context
+- `timestamp` — ISO 8601 string or Unix epoch integer (seconds); defaults to current time
 
 - `POST /identify`
 - Transition identity state (web/mobile) or pass IDs explicitly (server).
+- `timestamp` is an optional ISO 8601 string or Unix epoch integer (seconds). If omitted, default to the current time as an ISO 8601 string.
 - Payload excludes `session_id`.
+- **Server tier**: `user_id` becomes `distinct_id` in the payload. `anonymous_id` and `device_id` are optional — supply them when forwarding client-side identity context.
 
-#### `alias(newUserId)`
+#### `alias`
+
+**Web/mobile**: `alias(new_user_id, options?)`
+
+`options` (web/mobile, all optional, use named/keyword arguments):
+
+- `timestamp` — ISO 8601 string or Unix epoch integer (seconds); defaults to current time
+
+**Server**: `alias(distinct_id, new_user_id, options?)`
+
+`options` (server, all optional, use named/keyword arguments):
+
+- `timestamp` — ISO 8601 string or Unix epoch integer (seconds); defaults to current time
 
 - `POST /alias`
 - Links `distinct_id` → `new_user_id`.
+- `timestamp` is an optional ISO 8601 string or Unix epoch integer (seconds). If omitted, default to the current time as an ISO 8601 string.
+- **Server tier**: `distinct_id` is required as the first argument because there is no stored `distinct_id` to link from. It maps directly to `distinct_id` in the payload.
 
 #### `page(url)` — web tier only
 
@@ -304,6 +354,7 @@ No `session_id` in the payload.
 
 ```json
 {
+  "timestamp": "2025-06-15T14:30:00.000Z",
   "environment": "production",
   "device_id": "device-550e8400-e29b-41d4-a716-446655440000",
   "distinct_id": "user-42",
@@ -318,6 +369,7 @@ No `session_id` in the payload.
 
 ```json
 {
+  "timestamp": "2025-06-15T14:30:00.000Z",
   "environment": "production",
   "device_id": "device-550e8400-e29b-41d4-a716-446655440000",
   "distinct_id": "anonymous-7c9e6679-7425-40de-944b-e07fc1f90ae7",
@@ -451,7 +503,7 @@ The example must match the user journey and API coverage of the [React reference
    - Track transition events (e.g., `Personal Info Completed`, `Account Setup Completed`).
    - Track interaction events (e.g., `Plan Selected`, `Terms Agreement Changed`).
 3. **Identity Management**:
-   - On the final step, call `identify(userId, traits)` with the collected information.
+   - On the final step, call `identify(user_id, traits)` with the collected information.
    - Track `Form Submitted` immediately after identification.
 4. **State Persistence**: Verify that the SDK maintains state across step transitions.
 
