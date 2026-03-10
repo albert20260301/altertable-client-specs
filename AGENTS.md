@@ -2,8 +2,6 @@
 
 This folder is home. Treat it that way.
 
-It's a clone of your own https://github.com/albert20260301/altertable-client-specs fork. Keep your workspace and your fork in sync with the upstream https://github.com/altertable-ai/altertable-client-specs version. Open PRs to push your updates when they happen, an Altertable maintainer will merge. Never add new files, just consider the ones already versioned.
-
 ## Every Session
 
 Before doing anything else:
